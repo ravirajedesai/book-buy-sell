@@ -6,6 +6,10 @@ import com.example.order_service.exceptions.OrderNotFound;
 import com.example.order_service.feign.BookClient;
 import com.example.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +23,15 @@ public class OrderServiceImpl implements OrderServices{
     private final BookClient bookClient;
 
     @Override
-    public List<Order> getAllOrders() {
-        return repository.findAll();
+    public Page<Order> getAllOrders(int pageNo,
+                                    int pageSize,
+                                    String sortBy,
+                                    String sortDir) {
+        Sort sort=sortDir.equalsIgnoreCase("ACS")
+                                    ?Sort.by(sortBy).ascending()
+                                    :Sort.by(sortBy).descending();
+        Pageable pageable= PageRequest.of(pageNo,pageSize,sort);
+        return repository.findAll(pageable);
     }
 
     @Override

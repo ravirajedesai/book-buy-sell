@@ -4,6 +4,7 @@ import com.example.order_service.entity.Order;
 import com.example.order_service.service.OrderServices;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,12 @@ public class OrderController {
     private final OrderServices services;
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders(){
-        return ResponseEntity.ok(services.getAllOrders());
+    public ResponseEntity<Page<Order>>
+            getAllOrders(@RequestParam int pageNo,
+                         @RequestParam int pageSize,
+                         @RequestParam String sortBy,
+                         @RequestParam String sortDir){
+        return ResponseEntity.ok(services.getAllOrders(pageNo,pageSize,sortBy,sortDir));
     }
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id){

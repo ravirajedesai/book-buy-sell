@@ -12,8 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +25,7 @@ public class BookServiceImpl implements BookServices{
                                   String sortBy,
                                   String sortDir) {
 
-        Sort sort=sortDir.equalsIgnoreCase("Asc")
+        Sort sort=sortDir.equalsIgnoreCase("ASC")
                                 ? Sort.by(sortBy).ascending()
                                 : Sort.by(sortBy).descending();
 
@@ -37,13 +35,14 @@ public class BookServiceImpl implements BookServices{
 
     @Override
     public Book getBookById(Long id) {
-        return repository.findById(id).orElseThrow(()->new RuntimeException("Book Not Found:"+id));
+        return repository.findById(id)
+                .orElseThrow(()->new BookNotFound("Book Not Found:"+id));
     }
 
     @Override
     public void deleteBookById(Long id) {
         if(!repository.existsById(id)){
-            throw new RuntimeException("Book Not Found: "+id);
+            throw new BookNotFound("Book Not Found: "+id);
         }
         repository.deleteById(id);
     }
